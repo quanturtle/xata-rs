@@ -1,6 +1,10 @@
+use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
-enum Region {
+use crate::{error::XataClientError, client::Xata};
+
+#[derive(Debug)]
+pub enum Region {
     US_EAST_1,
     US_EAST_2,
     US_WEST_1,
@@ -14,6 +18,20 @@ impl std::fmt::Display for Region {
             Region::US_EAST_2 => write!(f, "us-east-2"),
             Region::US_WEST_1 => write!(f, "us-west-1"),
             Region::US_WEST_2 => write!(f, "us-west-2"),
+        }
+    }
+}
+
+impl std::str::FromStr for Region {
+    type Err = XataClientError;
+
+    fn from_str(s: &str) -> Result<Region, XataClientError> {
+        match s {
+            "us-east-1" => Ok(Region::US_EAST_1),
+            "us-east-2" => Ok(Region::US_EAST_2),
+            "us-west-1" => Ok(Region::US_WEST_1),
+            "us-west-2" => Ok(Region::US_WEST_2),
+            _ => Err(XataClientError::InvalidRegion),
         }
     }
 }
