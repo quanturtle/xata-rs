@@ -13,7 +13,7 @@ Create a new client
 let xata: Xata = Xata::new(
     api_key: "my_key".to_owned(),
     workspace: "workspace_id".to_owned(),
-    region: US_EAST_1
+    region: Region::US_EAST_1
 );
 ```
 or from env variables
