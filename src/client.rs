@@ -10,7 +10,7 @@ use std::sync::Arc;
 use serde::de::DeserializeOwned;
 
 use reqwest::StatusCode;
-use reqwest::blocking::{Client, Response};
+use reqwest::blocking::{Client, Response, RequestBuilder};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 
 
@@ -26,34 +26,33 @@ impl XataClient {
         XataClient { client, api_key }
     }
 
-    pub fn _get(&self, url: &str) -> Result<Response, reqwest::Error> {
-        self.client.get(url)
-            .header(AUTHORIZATION, &format!("Bearer {}", self.api_key))
+    pub fn _set_header(&self, request: RequestBuilder) -> RequestBuilder {
+        request.header(AUTHORIZATION, &format!("Bearer {}", self.api_key))
             .header(CONTENT_TYPE, "application/json")
-            .send()
+    }
+
+    pub fn _get(&self, url: &str) -> Result<Response, reqwest::Error> {
+        let build_req: RequestBuilder = self.client.get(url);
+        let req: RequestBuilder = self._set_header(build_req);
+        req.send()
     }
 
     pub fn _post(&self, url: &str, payload: HashMap<String, String>) -> Result<Response, reqwest::Error> {
-        self.client.post(url)
-            .header(AUTHORIZATION, &format!("Bearer {}", self.api_key))
-            .header(CONTENT_TYPE, "application/json")
-            .json(&payload)
-            .send()
+        let build_req: RequestBuilder = self.client.post(url);
+        let req: RequestBuilder = self._set_header(build_req);
+        req.json(&payload).send()
     }
 
     pub fn _put(&self, url: &str, payload: HashMap<String, String>) -> Result<Response, reqwest::Error> {
-        self.client.put(url)
-            .header(AUTHORIZATION, &format!("Bearer {}", self.api_key))
-            .header(CONTENT_TYPE, "application/json")
-            .json(&payload)
-            .send()
+        let build_req: RequestBuilder = self.client.put(url);
+        let req: RequestBuilder = self._set_header(build_req);
+        req.json(&payload).send()
     }
 
     pub fn _delete(&self, url: &str) -> Result<Response, reqwest::Error> {
-        self.client.delete(url)
-            .header(AUTHORIZATION, &format!("Bearer {}", self.api_key))
-            .header(CONTENT_TYPE, "application/json")
-            .send()
+        let build_req: RequestBuilder = self.client.delete(url);
+        let req: RequestBuilder = self._set_header(build_req);
+        req.send()
     }
 
     pub fn parse<'de, T>(&self, response_body: String) -> Result<T, serde_json::Error>
