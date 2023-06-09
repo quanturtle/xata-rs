@@ -2,6 +2,7 @@
 pub enum XataClientError {
     Generic,
     NoContent,
+    InvalidRegion,
     BadRequest,
     InvalidAPIKey,
     Forbidden,
