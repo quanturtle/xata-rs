@@ -1,0 +1,10 @@
+[package]
+name = "xata-rs3"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dotenv = "0.15.0"
+serde_json = "1.0"
+serde = { version = "1.0.163", features = ["derive"] }
+reqwest = { version = "0.11", features = ["blocking", "json"] }
