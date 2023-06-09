@@ -1,11 +1,11 @@
+mod api;
 mod client;
 mod error;
 mod models;
-mod api;
 
 use client::{Xata, XataClient};
 use error::XataClientError;
-use models::User;
+use models::{User, Region};
 use api::Users;
 
 use std::collections::HashMap;
@@ -13,13 +13,13 @@ use std::collections::HashMap;
 
 fn main() {
     // low level API
-    let xata_cli: XataClient = XataClient::new("your_api_key".to_owned());
+    let xata_cli: XataClient = XataClient::new("your_api_key".to_owned()); // replace with your API key
     let resp = xata_cli._get("https://api.xata.io/user").unwrap();
     let result = xata_cli._handle_response::<User>(resp).unwrap();
     println!("{:?}", result);
     
     // high level API
-    // let xata: Xata = Xata::new("your_api_key".to_owned());
+    // let xata: Xata = Xata::new("your_api_key".to_owned(), "workspace".to_owned(), Region::US_EAST_1); // replace with your credentials
     let xata: Xata = Xata::from_env(); // requires .env file
 
     // get example
