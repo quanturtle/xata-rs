@@ -46,3 +46,27 @@ impl Authentication {
         Ok(result)
     }
 }
+
+pub struct Workspaces {}
+impl Workspaces {}
+
+pub struct Invites {}
+impl Invites {}
+
+pub struct Databases {}
+impl Databases {}
+
+pub struct Branch {}
+impl Branch {}
+
+pub struct Migrations {}
+impl Migrations {}
+
+pub struct Tables {}
+impl Tables {}
+
+pub struct Records {}
+impl Records {}
+
+pub struct Query {}
+impl Query {}
