@@ -66,13 +66,11 @@ impl XataClient {
         let status: StatusCode = response.status();
         match status {
             // 200 OK / 201 Created
-            StatusCode::OK | StatusCode::CREATED => {
+            StatusCode::OK | StatusCode::CREATED | StatusCode::NO_CONTENT => {
                 let response_body: String = response.text()?;
                 let parsed: T = self.parse::<T>(response_body)?;
                 Ok(parsed)
             },
-            // 204 No Content
-            StatusCode::NO_CONTENT => Err(XataClientError::NoContent),
             // 400 Bad Request
             StatusCode::BAD_REQUEST => Err(XataClientError::BadRequest),
             // 401 Unauthorized
