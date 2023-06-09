@@ -1,9 +1,9 @@
-use crate::api::{Users, Authentication, self};
+use crate::api::{Users, Authentication};
 use crate::error::XataClientError;
-use crate::models::{User, Key, KeyList};
+use crate::models::{User, Key, KeyList, Region};
 
 use dotenv::dotenv;
-
+use std::str::FromStr;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -98,7 +98,7 @@ pub struct Xata {
 }
 
 impl Xata {
-    pub fn new(api_key: String) -> Xata {
+    pub fn new(api_key: String, workspace: String, region: Region) -> Xata {
         let xata_client: Arc<XataClient> = Arc::new(XataClient::new(api_key));
         let users: Users = Users { 
             client: Arc::clone(&xata_client),
@@ -116,9 +116,9 @@ impl Xata {
 
         let api_key: String = env_vars.get("API_KEY").expect("API_KEY not found").to_owned();
         let workspace: String = env_vars.get("WORKSPACE").expect("WORKSPACE not found").to_owned();
-        let region: String = env_vars.get("REGION").expect("REGION not found").to_owned();
+        let region: Region = Region::from_str(env_vars.get("REGION").expect("REGION not found")).expect("Invalid region");
 
-        Xata::new(api_key)        
+        Xata::new(api_key, workspace, region)        
     }
 
     fn load_env_vars() -> HashMap<String, String> {
