@@ -1,8 +1,8 @@
 # xata-rs: Lightweight, Strongly Typed Xata Client
 
-xata-rs is a third party Xata API client, allowing to interact with Xata's REST API. 
+xata-rs is a third party Xata API client, allowing interaction with Xata's REST API. 
 
-## Adding xata-rs
+## Adding xata-rs (WIP)
 ```
 cargo add xata-rs
 ```
@@ -26,8 +26,22 @@ Call an endpoint (for more info, check the [xata docs](https://xata.io/docs/over
 ```
 let user: User = xata.users.get_details()?;
 println!("{#?}", user)
+```
+```
+> User { "usr_XXXXX", "quanturtle", "my@email.com" }
+```
 
->> User { "usr_XXXXX", "quanturtle", "my@email.com" }
+```
+let mut payload: HashMap<String, String> = HashMap::new();
+payload.insert("email".to_owned(), "your_email".to_owned());
+payload.insert("fullname".to_owned(), "another name".to_owned());
+
+let updated_user: User = xata.users.update_user_info(payload).unwrap();
+
+println!("{#?}", updated_user)
+```
+```
+> User { "usr_XXXXX", "another name", "my@email.com" }
 ```
 
 ## API Endpoints

@@ -15,19 +15,19 @@ pub struct Users {
 
 impl Users {
     pub fn get_user_details(&self) -> Result<User, XataClientError> {
-        let resp: Response = self.client._get("https://api.xata.io/user")?;
+        let resp: Response = self.client._get(&self.url)?;
         let result: User = self.client._handle_response::<User>(resp)?;
         Ok(result)
     }
 
     pub fn update_user_info(&self, payload: HashMap<String, String>) -> Result<User, XataClientError> {
-        let resp: Response = self.client._put("https://api.xata.io/user", payload)?;
+        let resp: Response = self.client._put(&self.url, payload)?;
         let result: User = self.client._handle_response::<User>(resp)?;
         Ok(result)
     }
 
     pub fn delete_user(&self) -> Result<(), XataClientError> {
-        let resp: Response = self.client._delete("https://api.xata.io/user")?;
+        let resp: Response = self.client._delete(&self.url)?;
         self.client._handle_response::<()>(resp)?;
         Ok(())
     }
@@ -41,7 +41,7 @@ pub struct Authentication {
 
 impl Authentication {
     pub fn get_api_keys(&self) -> Result<KeyList, XataClientError> {
-        let resp: Response = self.client._get("https://api.xata.io/user/keys")?;
+        let resp: Response = self.client._get(&self.url)?;
         let result: KeyList = self.client._handle_response::<KeyList>(resp)?;
         Ok(result)
     }

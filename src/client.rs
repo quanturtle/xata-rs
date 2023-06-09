@@ -1,4 +1,4 @@
-use crate::api::{Users, Authentication};
+use crate::api::{Users, Authentication, self};
 use crate::error::XataClientError;
 use crate::models::{User, Key, KeyList};
 
@@ -56,23 +56,39 @@ impl XataClient {
     }
 
     pub fn parse<'de, T>(&self, response_body: String) -> Result<T, serde_json::Error>
-        where T: DeserializeOwned {
+    where T: DeserializeOwned {
             let parsed: T = serde_json::from_str(&response_body)?;
             Ok(parsed)
     }
 
     pub fn _handle_response<'de, T>(&self, response: Response) -> Result<T, XataClientError> 
-        where T: DeserializeOwned {
+    where T: DeserializeOwned {
         let status: StatusCode = response.status();
         match status {
-            StatusCode::OK => {
+            // 200 OK / 201 Created
+            StatusCode::OK | StatusCode::CREATED => {
                 let response_body: String = response.text()?;
                 let parsed: T = self.parse::<T>(response_body)?;
                 Ok(parsed)
             },
-            _ => {
-                Err(XataClientError::Generic)
-            }
+            // 204 No Content
+            StatusCode::NO_CONTENT => Err(XataClientError::NoContent),
+            // 400 Bad Request
+            StatusCode::BAD_REQUEST => Err(XataClientError::BadRequest),
+            // 401 Unauthorized
+            StatusCode::UNAUTHORIZED => Err(XataClientError::InvalidAPIKey),
+            // 403 Forbidden
+            StatusCode::FORBIDDEN => Err(XataClientError::Forbidden),
+            // 404 Not Found
+            StatusCode::NOT_FOUND => Err(XataClientError::NotFound),
+            // 422
+            StatusCode::UNPROCESSABLE_ENTITY => Err(XataClientError::InvalidDatabaseURL),
+            // 423
+            StatusCode::LOCKED => Err(XataClientError::RateLimitExceeded),
+            // 500 and above
+            code if code.is_server_error() => Err(XataClientError::ServerError),
+            // Everything else
+            _ => Err(XataClientError::Generic)
         }
     } 
 }
@@ -101,22 +117,10 @@ impl Xata {
         let env_vars: HashMap<String, String> = Self::load_env_vars();
 
         let api_key: String = env_vars.get("API_KEY").expect("API_KEY not found").to_owned();
-        let xata_client: Arc<XataClient> = Arc::new(XataClient::new(api_key));
-
         let workspace: String = env_vars.get("WORKSPACE").expect("WORKSPACE not found").to_owned();
         let region: String = env_vars.get("REGION").expect("REGION not found").to_owned();
 
-        let users: Users = Users { 
-            client: Arc::clone(&xata_client),
-            url: "https://api.xata.io/user".to_owned() 
-        };
-        let authentication: Authentication = Authentication { 
-            client: Arc::clone(&xata_client),
-            url: "https://api.xata.io/user/keys".to_owned()
-        };
-
-        Xata { users, authentication }
-        
+        Xata::new(api_key)        
     }
 
     fn load_env_vars() -> HashMap<String, String> {
