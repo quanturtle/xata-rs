@@ -1,6 +1,6 @@
 # xata-rs: Lightweight, Strongly Typed Xata Client
 
-xata-rs is a third party Xata API client, allowing interaction with Xata's REST API. 
+xata-rs is a third party Xata client, allowing interaction with Xata's REST API. 
 
 ## Adding xata-rs (WIP)
 ```
