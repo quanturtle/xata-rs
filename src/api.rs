@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use reqwest::blocking::Response;
 
 use crate::error::XataClientError;
-use crate::models::{User, Key, KeyList};
+use crate::models::{User, Key, NewKey, KeyList, WorkspaceList};
 use crate::client::XataClient;
 
 
@@ -45,10 +45,35 @@ impl Authentication {
         let result: KeyList = self.client._handle_response::<KeyList>(resp)?;
         Ok(result)
     }
+
+    pub fn create_api_key(&self, name: String) -> Result<NewKey, XataClientError> {
+        let key_url: String = format!("{}/{}", &self.url, name);
+        let resp: Response = self.client._post(&key_url, HashMap::new())?;
+        let result: NewKey = self.client._handle_response::<NewKey>(resp)?;
+        Ok(result)
+    }
+
+    pub fn delete_api_key(&self, name: String) -> Result<(), XataClientError> {
+        let key_url: String = format!("{}/{}", &self.url, name);
+        let resp: Response = self.client._delete(&key_url)?;
+        self.client._handle_response::<()>(resp)?;
+        Ok(())
+    }
 }
 
-pub struct Workspaces {}
-impl Workspaces {}
+#[derive(Debug)]
+pub struct Workspaces {
+    pub client: Arc<XataClient>,
+    pub url: String
+}
+
+impl Workspaces {
+    pub fn list_workspaces(&self) -> Result<WorkspaceList, XataClientError>{
+        let resp: Response = self.client._get(&self.url)?;
+        let result: WorkspaceList = self.client._handle_response::<WorkspaceList>(resp)?;
+        Ok(result)
+    }
+}
 
 pub struct Invites {}
 impl Invites {}

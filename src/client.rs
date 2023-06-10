@@ -1,4 +1,4 @@
-use crate::api::{Users, Authentication};
+use crate::api::{Users, Authentication, Workspaces};
 use crate::error::XataClientError;
 use crate::models::{User, Key, KeyList, Region};
 
@@ -95,11 +95,13 @@ impl XataClient {
 pub struct Xata {
     pub users: Users,
     pub authentication: Authentication,
+    pub workspaces: Workspaces,
 }
 
 impl Xata {
     pub fn new(api_key: String, workspace: String, region: Region) -> Xata {
         let xata_client: Arc<XataClient> = Arc::new(XataClient::new(api_key));
+        
         let users: Users = Users { 
             client: Arc::clone(&xata_client),
             url: "https://api.xata.io/user".to_owned() 
@@ -108,7 +110,12 @@ impl Xata {
             client: Arc::clone(&xata_client),
             url: "https://api.xata.io/user/keys".to_owned()
         };
-        Xata { users, authentication }
+        let workspaces: Workspaces = Workspaces {
+            client: Arc::clone(&xata_client),
+            url: "https://api.xata.io/workspaces".to_owned()
+        }; 
+        
+        Xata { users, authentication, workspaces }
     }
 
     pub fn from_env() -> Xata {
@@ -128,3 +135,9 @@ impl Xata {
     }
 }
 
+// mod tests {
+//     #[test]
+//     fn test() {
+//         assert_eq!(1, 1);
+//     }
+// }

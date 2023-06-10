@@ -43,7 +43,6 @@ pub struct User {
     email: String,
 }
 
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Key {
     name: String, 
@@ -51,8 +50,28 @@ pub struct Key {
     created_at: String
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct NewKey {
+    name: String,
+    key: String, 
+    #[serde(rename = "createdAt")]
+    created_at: String
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct KeyList {
     keys: Vec<Key>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Workspace {
+    id: String,
+    slug: String,
+    name: String,
+    role: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct WorkspaceList {
+    workspaces: Vec<Workspace>,
 }
